@@ -1,0 +1,50 @@
+body {
+    background: #000;
+    color: #fff;
+}
+.gamepad-main {
+    width: 400px;
+    height: 350px;
+    margin: auto;
+    transform: translateY(25%);
+    border: 1px solid #fff;
+    padding: 40px;
+}
+.mouse {
+    width: 200px;
+    height: 30px;
+    margin: 20px auto;
+    border: 1px solid #fff;
+    transition: all .3s;
+}
+.mouse-close {
+    height: 10px;
+    transition: all .3s;
+}
+.gamepad {
+    width: 100%;
+}
+.flex {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+.left_axis, .right_axis {
+    width: 100px;
+    height: 100px;
+    border: 1px solid #fff;
+    position: relative;
+    border-radius: 50%;
+}
+.left_axis_btn, .right_axis_btn {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    background: #fff;
+    transform: translate(-50%, -50%);
+    transition: all 0.2s;
+    border-radius: 50%;
+}
+.axis_btn_press {
+    background: red;
+}

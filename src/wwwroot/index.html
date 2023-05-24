@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/js/vue.global.js"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <pre>{{ gamepad }}</pre>
+
+        <div class="gamepad-main">
+            <div class="flex gamepad">
+                <div>
+                    <button :disabled="gamepad.btn !== 9">L1</button>
+                    <button :disabled="gamepad.left_tigger_value === -1">L2</button>
+                </div>
+                <div>
+                    <button :disabled="gamepad.right_tigger_value === -1">R2</button>
+                    <button :disabled="gamepad.btn !== 10">r1</button>
+                </div>
+            </div>
+            <div class="flex gamepad">
+                <div style="text-align: center;">
+                    <div>
+                        <button :disabled="gamepad.btn !== 11">上</button>
+                    </div>
+                    <div>
+                        <button :disabled="gamepad.btn !== 13" style="margin-right: 20px;">左</button>
+                        <button :disabled="gamepad.btn !== 14" style="margin-left: 20px;">右</button>
+                    </div>
+                    <div>
+                        <button :disabled="gamepad.btn !== 12">下</button>
+                    </div>
+                </div>
+                <div style="margin-top: 20px">
+                    <button :disabled="gamepad.btn !== 4" style="margin-right: 10px;">Select</button>
+                    <button :disabled="gamepad.btn !== 6" style="margin-left: 10px;">Start</button>
+                </div>
+                <div style="text-align: center;">
+                    <div>
+                        <button :disabled="gamepad.btn !== 2">X</button>
+                    </div>
+                    <div>
+                        <button :disabled="gamepad.btn !== 3" style="margin-right: 20px;">Y</button>
+                        <button :disabled="gamepad.btn !== 0" style="margin-left: 20px;">A</button>
+                    </div>
+                    <div>
+                        <button :disabled="gamepad.btn !== 1">B</button>
+                    </div>
+                </div>
+            </div>
+            <div class="flex gamepad">
+                <div>
+                    <button :disabled="gamepad.btn !== 15">⭐</button>
+                </div>
+                <div>
+                    <button :disabled="gamepad.btn !== 5">🏠</button>
+                </div>
+            </div>
+            <div class="flex gamepad">
+                <div class="left_axis">
+                    <div class="left_axis_btn" :class="gamepad.btn === 7 ? 'axis_btn_press' : ''" :style="{
+                                        left: gamepad.left_axis_x * 50 + 50 + 'px',
+                                        top: gamepad.left_axis_y * 50 + 50 + 'px',
+                                    }"></div>
+                </div>
+                <div class="right_axis">
+                    <div class="right_axis_btn" :class="gamepad.btn === 8 ? 'axis_btn_press' : ''" :style="{
+                                        left: gamepad.right_axis_x * 50 + 50 + 'px',
+                                        top: gamepad.right_axis_y * 50 + 50 + 'px',
+                                    }"></div>
+                </div>
+            </div>
+            <div class="mouse" :class="gamepad.btn === -1 ? 'mouse-close' : ''"></div>
+        </div>
+    </div>
+    <script>
+        window.onload = () => {
+            const { createApp } = Vue
+            createApp({
+                data() {
+                    return {
+                        gamepad: {
+                            "btn": -1,
+                            "left_tigger_value": -1,
+                            "right_tigger_value": -1,
+                            "left_axis_x": 0,
+                            "left_axis_y": 0,
+                            "right_axis_x": 0,
+                            "right_axis_y": 0
+                        }
+                    }
+                },
+                created() {
+                    this.websocketInit();
+                },
+                methods: {
+                    websocketInit() {
+                        const _this = this;
+                        // Create WebSocket connection.
+                        const socket = new WebSocket("ws://192.168.1.15:8765");
+
+                        // Connection opened
+                        socket.addEventListener("open", (event) => {
+                            socket.send("Hello Server!");
+                        });
+
+                        // Listen for messages
+                        socket.addEventListener("message", (event) => {
+                            const reader = new FileReader();
+
+                            // 将接收到的二进制数据转换为文本
+                            reader.onload = function () {
+                                const text = reader.result;
+                                const jsonData = JSON.parse(text);
+
+                                // 在控制台中打印解析后的 JSON 数据
+                                console.log(jsonData);
+                                _this.gamepad = jsonData;
+                                // 进行其他操作
+                                // ...
+                            };
+
+                            reader.readAsText(event.data);
+                        });
+                    }
+                }
+            }).mount('#app')
+        }
+    </script>
+</body>
+
+</html>
