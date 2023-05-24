@@ -14,55 +14,58 @@
     <div id="app">
         <pre>{{ gamepad }}</pre>
 
-        <div class="gamepad-main">
-            <div class="flex gamepad">
-                <div>
-                    <button :disabled="gamepad.btn !== 9">L1</button>
-                    <button :disabled="gamepad.left_tigger_value === -1">L2</button>
-                </div>
-                <div>
-                    <button :disabled="gamepad.right_tigger_value === -1">R2</button>
-                    <button :disabled="gamepad.btn !== 10">r1</button>
-                </div>
-            </div>
-            <div class="flex gamepad">
-                <div style="text-align: center;">
+        <div class="gamepad-main"
+            :class="gamepad.left_tigger_value !== -1 && gamepad.right_tigger_value !== -1 ? 'bamepad-main-active' : ''">
+            <template v-if="btnVisible">
+                <div class="flex gamepad">
                     <div>
-                        <button :disabled="gamepad.btn !== 11">上</button>
+                        <button :disabled="gamepad.btn !== 9">L1</button>
+                        <button :disabled="gamepad.left_tigger_value === -1">L2</button>
                     </div>
                     <div>
-                        <button :disabled="gamepad.btn !== 13" style="margin-right: 20px;">左</button>
-                        <button :disabled="gamepad.btn !== 14" style="margin-left: 20px;">右</button>
+                        <button :disabled="gamepad.right_tigger_value === -1">R2</button>
+                        <button :disabled="gamepad.btn !== 10">r1</button>
+                    </div>
+                </div>
+                <div class="flex gamepad">
+                    <div style="text-align: center;">
+                        <div>
+                            <button :disabled="gamepad.btn !== 11">上</button>
+                        </div>
+                        <div>
+                            <button :disabled="gamepad.btn !== 13" style="margin-right: 20px;">左</button>
+                            <button :disabled="gamepad.btn !== 14" style="margin-left: 20px;">右</button>
+                        </div>
+                        <div>
+                            <button :disabled="gamepad.btn !== 12">下</button>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px">
+                        <button :disabled="gamepad.btn !== 4" style="margin-right: 10px;">Select</button>
+                        <button :disabled="gamepad.btn !== 6" style="margin-left: 10px;">Start</button>
+                    </div>
+                    <div style="text-align: center;">
+                        <div>
+                            <button :disabled="gamepad.btn !== 2">X</button>
+                        </div>
+                        <div>
+                            <button :disabled="gamepad.btn !== 3" style="margin-right: 20px;">Y</button>
+                            <button :disabled="gamepad.btn !== 0" style="margin-left: 20px;">A</button>
+                        </div>
+                        <div>
+                            <button :disabled="gamepad.btn !== 1">B</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex gamepad">
+                    <div>
+                        <button :disabled="gamepad.btn !== 15">⭐</button>
                     </div>
                     <div>
-                        <button :disabled="gamepad.btn !== 12">下</button>
+                        <button :disabled="gamepad.btn !== 5">🏠</button>
                     </div>
                 </div>
-                <div style="margin-top: 20px">
-                    <button :disabled="gamepad.btn !== 4" style="margin-right: 10px;">Select</button>
-                    <button :disabled="gamepad.btn !== 6" style="margin-left: 10px;">Start</button>
-                </div>
-                <div style="text-align: center;">
-                    <div>
-                        <button :disabled="gamepad.btn !== 2">X</button>
-                    </div>
-                    <div>
-                        <button :disabled="gamepad.btn !== 3" style="margin-right: 20px;">Y</button>
-                        <button :disabled="gamepad.btn !== 0" style="margin-left: 20px;">A</button>
-                    </div>
-                    <div>
-                        <button :disabled="gamepad.btn !== 1">B</button>
-                    </div>
-                </div>
-            </div>
-            <div class="flex gamepad">
-                <div>
-                    <button :disabled="gamepad.btn !== 15">⭐</button>
-                </div>
-                <div>
-                    <button :disabled="gamepad.btn !== 5">🏠</button>
-                </div>
-            </div>
+            </template>
             <div class="flex gamepad">
                 <div class="left_axis">
                     <div class="left_axis_btn" :class="gamepad.btn === 7 ? 'axis_btn_press' : ''" :style="{
@@ -86,6 +89,7 @@
             createApp({
                 data() {
                     return {
+                        btnVisible: false,
                         gamepad: {
                             "btn": -1,
                             "left_tigger_value": -1,
@@ -129,6 +133,16 @@
 
                             reader.readAsText(event.data);
                         });
+                    }
+                },
+                watch: {
+                    'gamepad': {
+                        deep: true,
+                        handler: function () {
+                            if (this.gamepad.left_tigger_value !== -1 && this.gamepad.right_tigger_value !== -1) {
+                                this.btnVisible = !this.btnVisible
+                            }
+                        }
                     }
                 }
             }).mount('#app')

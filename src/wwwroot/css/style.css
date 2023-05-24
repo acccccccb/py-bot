@@ -9,6 +9,11 @@ body {
     transform: translateY(25%);
     border: 1px solid #fff;
     padding: 40px;
+    transition: all .5s;
+}
+.bamepad-main-active {
+    background: goldenrod;
+    transition: all .5s;
 }
 .mouse {
     width: 200px;
