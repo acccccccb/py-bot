@@ -19,7 +19,6 @@ for voice in voices:
 engine.setProperty('rate', 200)
 
 
-
 def speak():
     while True:
         try:
@@ -36,5 +35,3 @@ def speak():
 
     # 销毁语音引擎
     print('exit')
-    
-    

@@ -4,6 +4,7 @@ import http.server
 import socketserver
 import asyncio
 
+
 def http_server(queue):
     HTTP_HOST = os.getenv('HTTP_HOST')
     # 指定服务器的端口号
@@ -18,10 +19,10 @@ def http_server(queue):
     handler = http.server.SimpleHTTPRequestHandler
 
     # 使用指定的端口号启动服务器
-    
-    
+
     def main():
-        with socketserver.TCPServer((HTTP_HOST, int(HTTP_PORT)), handler) as httpd:
+        with socketserver.TCPServer((HTTP_HOST, int(HTTP_PORT)),
+                                    handler) as httpd:
             print(f"Server started on {HTTP_HOST}:{HTTP_PORT}")
             httpd.serve_forever()
             asyncio.Future()  # run forever

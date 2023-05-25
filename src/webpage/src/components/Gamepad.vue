@@ -1,17 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="/js/vue.global.js"></script>
-    <link rel="stylesheet" href="/css/style.css">
-    <title>Document</title>
-</head>
-
-<body>
-    <div id="app">
+<template>
+    <div>
         <pre>{{ gamepad }}</pre>
         <pre>{{ dogTop }}</pre>
         <pre>{{ dogLeft }}</pre>
@@ -95,90 +83,146 @@
             <div class="mouse" :class="gamepad.btn === -1 ? 'mouse-close' : ''"></div>
         </div>
     </div>
-    <script>
-        window.onload = () => {
-            const { createApp } = Vue
-            createApp({
-                data() {
-                    return {
-                        lock: false,
-                        btnVisible: false,
-                        gamepad: {
-                            "power_level": -1,
-                            "btn": -1,
-                            "left_tigger_value": -1,
-                            "right_tigger_value": -1,
-                            "left_axis_x": 0,
-                            "left_axis_y": 0,
-                            "right_axis_x": 0,
-                            "right_axis_y": 0
-                        },
-                        dogTop: 0,
-                        dogLeft: 0,
-                        dogTop2: 0,
-                        dogLeft2: 0,
-                    }
+</template>
+<script>
+    export default {
+    name: "gamepad",
+        data() {
+            return {
+                lock: false,
+                btnVisible: false,
+                gamepad: {
+                    "power_level": -1,
+                    "btn": -1,
+                    "left_tigger_value": -1,
+                    "right_tigger_value": -1,
+                    "left_axis_x": 0,
+                    "left_axis_y": 0,
+                    "right_axis_x": 0,
+                    "right_axis_y": 0
                 },
-                created() {
-                    this.websocketInit();
-                },
-                methods: {
-                    websocketInit() {
-                        const _this = this;
-                        // Create WebSocket connection.
-                        const socket = new WebSocket(`ws://${window.location.hostname}:8765`);
+                dogTop: 0,
+                dogLeft: 0,
+                dogTop2: 0,
+                dogLeft2: 0,
+            }
+        },
+        created() {
+            this.websocketInit();
+        },
+        methods: {
+            websocketInit() {
+                const _this = this;
+                // Create WebSocket connection.
+                const socket = new WebSocket(`ws://${window.location.hostname}:8765`);
 
-                        // Connection opened
-                        socket.addEventListener("open", (event) => {
-                            socket.send("Hello Server!");
-                        });
+                // Connection opened
+                socket.addEventListener("open", (event) => {
+                    socket.send("Hello Server!");
+                });
 
-                        // Listen for messages
-                        socket.addEventListener("message", (event) => {
-                            const reader = new FileReader();
+                // Listen for messages
+                socket.addEventListener("message", (event) => {
+                    const reader = new FileReader();
 
-                            // 将接收到的二进制数据转换为文本
-                            reader.onload = function () {
-                                const text = reader.result;
-                                const jsonData = JSON.parse(text);
+                    // 将接收到的二进制数据转换为文本
+                    reader.onload = function () {
+                        const text = reader.result;
+                        const jsonData = JSON.parse(text);
 
-                                // 在控制台中打印解析后的 JSON 数据
-                                console.log(jsonData);
-                                _this.gamepad = jsonData;
-                                _this.dogLeft += jsonData.left_axis_x * 50;
-                                _this.dogTop += jsonData.left_axis_y * 50;
-                                _this.dogLeft2 += jsonData.right_axis_x * 50;
-                                _this.dogTop2 += jsonData.right_axis_y * 50;
-                                // 进行其他操作
-                                // ...
-                            };
+                        // 在控制台中打印解析后的 JSON 数据
+                        // console.log(jsonData);
+                        _this.gamepad = jsonData;
+                        _this.dogLeft += jsonData.left_axis_x * 50;
+                        _this.dogTop += jsonData.left_axis_y * 50;
+                        _this.dogLeft2 += jsonData.right_axis_x * 50;
+                        _this.dogTop2 += jsonData.right_axis_y * 50;
+                        // 进行其他操作
+                        // ...
+                    };
 
-                            reader.readAsText(event.data);
-                        });
-                    }
-                },
-                watch: {
-                    'gamepad': {
-                        deep: true,
-                        handler: function () {
-                            if (this.gamepad.left_tigger_value !== -1 && this.gamepad.right_tigger_value !== -1) {
-                                if(window.$lockTimmer) {
-                                    clearTimeout(window.$lockTimmer);
-                                }
-                                window.$lockTimmer = setTimeout(() => {
-                                    this.lock = false;
-                                }, 100)
-                                if(!this.lock) {
-                                    this.lock = true;
-                                    this.btnVisible = !this.btnVisible
-                                }
-                            }
+                    reader.readAsText(event.data);
+                });
+            }
+        },
+        watch: {
+            'gamepad': {
+                deep: true,
+                handler: function () {
+                    if (this.gamepad.left_tigger_value !== -1 && this.gamepad.right_tigger_value !== -1) {
+                        if(window.$lockTimmer) {
+                            clearTimeout(window.$lockTimmer);
+                        }
+                        window.$lockTimmer = setTimeout(() => {
+                            this.lock = false;
+                        }, 100)
+                        if(!this.lock) {
+                            this.lock = true;
+                            this.btnVisible = !this.btnVisible
                         }
                     }
                 }
-            }).mount('#app')
+            }
         }
-    </script>
-</body>
-
-</html>
+    }
+</script>
+<style scoped>
+.gamepad-main {
+    width: 400px;
+    height: 350px;
+    margin: auto;
+    transform: translateY(25%);
+    border: 1px solid #fff;
+    padding: 40px;
+    transition: all .5s;
+}
+.bamepad-main-active {
+    background: goldenrod;
+    transition: all .5s;
+}
+.mouse {
+    width: 200px;
+    height: 30px;
+    margin: 20px auto;
+    border: 1px solid #fff;
+    transition: all .3s;
+}
+.mouse-close {
+    height: 10px;
+    transition: all .3s;
+}
+.gamepad {
+    width: 100%;
+}
+.flex {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+.left_axis, .right_axis {
+    width: 100px;
+    height: 100px;
+    border: 1px solid #fff;
+    position: relative;
+    border-radius: 50%;
+}
+.left_axis_btn, .right_axis_btn {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    background: #fff;
+    transform: translate(-50%, -50%);
+    transition: all 0.2s;
+    border-radius: 50%;
+}
+.axis_btn_press {
+    background: red;
+}
+.dog {
+    position: fixed;
+    width: 50px;
+    height: 50px;
+    background: rgb(112, 174, 255);
+    transition: all 0.2s;
+}
+</style>

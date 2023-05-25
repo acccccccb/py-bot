@@ -16,7 +16,7 @@ def start_websocket(queue):
             while True:
                 output = queue.get()
                 await websocket.send(output)
-                await asyncio.sleep(1/30)
+                await asyncio.sleep(1 / 30)
         except websockets.exceptions.ConnectionClosedOK:
             # 连接关闭时的操作
             connected = False
@@ -24,10 +24,12 @@ def start_websocket(queue):
             return 0
 
     async def main():
-        async with websockets.serve(handle_connection, WEBSOCKET_HOST, WEBSOCKET_PORT):
+        async with websockets.serve(handle_connection, WEBSOCKET_HOST,
+                                    WEBSOCKET_PORT):
             print(f"socket running on: {WEBSOCKET_HOST}:{WEBSOCKET_PORT}")
             await asyncio.Future()  # run forever
 
     asyncio.run(main())
+
 
 # start_websocket()

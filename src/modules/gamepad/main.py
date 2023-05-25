@@ -2,6 +2,8 @@
 import json
 import pygame
 import time, sys
+
+
 def gamepad(queue):
     pygame.init()
     pygame.joystick.init()
@@ -24,7 +26,6 @@ def gamepad(queue):
     # buffer_surface = pygame.Surface((window_width, window_height))
     # pygame.display.set_caption("Gamepad")
 
-
     # def printText(str, text_color, x=0, y=0):
     #     font = pygame.font.Font(None, 28)
     #     font.set_bold(False)
@@ -41,13 +42,12 @@ def gamepad(queue):
     #     for line in text_lines:
     #         text = font.render(line, True, text_color)
     #         buffer_surface.blit(text, (10, y))
-    #         y += 24 
+    #         y += 24
 
     # def clearWindow():
     #     buffer_surface.fill((0, 0, 0))
-        
-    running = True
 
+    running = True
 
     clock = pygame.time.Clock()
 
@@ -57,7 +57,7 @@ def gamepad(queue):
     btn = -1
 
     # 摇杆移动的阈值
-    movement_threshold = 0.2  
+    movement_threshold = 0.2
 
     # 扳机 左
     left_tigger_id = -1
@@ -99,7 +99,7 @@ def gamepad(queue):
                 press = True
                 btn = event.button
             elif event.type == pygame.JOYBUTTONUP:
-                # 按钮操作 
+                # 按钮操作
 
                 # 退出程序
                 # if btn == 5:
@@ -111,7 +111,7 @@ def gamepad(queue):
 
             elif event.type == pygame.JOYAXISMOTION:
                 # 检查摇杆是否移动
-               
+
                 if event.axis == 0:
                     if abs(event.value) > movement_threshold:
                         left_axis_x_id = event.axis
@@ -120,7 +120,7 @@ def gamepad(queue):
                     elif abs(event.value) <= movement_threshold:
                         left_axis_x_moving = False
                         left_axis_x = 0
-                        
+
                 elif event.axis == 1:
                     if abs(event.value) > movement_threshold:
                         left_axis_y_id = event.axis
@@ -158,18 +158,17 @@ def gamepad(queue):
                         right_tigger_id = event.axis
                         right_tigger_moving = True
                         right_tigger_value = event.value
-                        joystick.rumble(1,1,100)
+                        joystick.rumble(1, 1, 100)
                     elif event.value <= 0:
                         right_tigger_moving = False
                         right_tigger_value = -1
-                
-            
+
             # if press == True:
             #     printText("Button Pressed: " + str(btn), text_color);
-            
+
             # if tigger == True:
             #     printText("Tigger: " + str(tigger_id) + ":" + str(tigger_value), text_color, 0, 100);
-            
+
             # if joystick_moving == True:
             #     printText("Axis: " + str(axis_id) + ":" + str(axis_value), text_color, 0, 200);
 
@@ -183,8 +182,7 @@ def gamepad(queue):
             #     "right_axis_x: " + str(right_axis_x),
             #     "right_axis_y: " + str(right_axis_y),
             # ]
-            
-            
+
             json_data = {
                 # "fps": clock.get_fps(),
                 "power_level": joystick.get_power_level(),
@@ -196,10 +194,9 @@ def gamepad(queue):
                 "right_axis_x": right_axis_x,
                 "right_axis_y": right_axis_y,
             }
-            
+
             queue.put(json.dumps(json_data).encode('utf-8'))
 
             # printLines(text_lines)
             # window.blit(buffer_surface, (0, 0))
             # pygame.display.flip()
-

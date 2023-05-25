@@ -2,3 +2,5 @@
 .idea
 .cloudbase
 */**/__pycache__
+src/webpage/node_modules
+src/webpage/dist
