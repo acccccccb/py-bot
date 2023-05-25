@@ -5,9 +5,9 @@ import socketserver
 import asyncio
 
 def http_server(queue):
-    
+    HTTP_HOST = os.getenv('HTTP_HOST')
     # 指定服务器的端口号
-    PORT = 8090
+    HTTP_PORT = os.getenv('HTTP_PORT')
     # 指定工作目录路径
     WWWROOT_DIR = os.path.join(os.getcwd(), 'src', 'wwwroot')
 
@@ -21,8 +21,8 @@ def http_server(queue):
     
     
     def main():
-        with socketserver.TCPServer(("", PORT), handler) as httpd:
-            print("Server started on port", PORT)
+        with socketserver.TCPServer((HTTP_HOST, int(HTTP_PORT)), handler) as httpd:
+            print(f"Server started on {HTTP_HOST}:{HTTP_PORT}")
             httpd.serve_forever()
             asyncio.Future()  # run forever
 

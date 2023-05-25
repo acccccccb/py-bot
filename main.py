@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-
+from dotenv import load_dotenv
+load_dotenv()  # take environment variables from .env.
+import os
 import signal
 import subprocess
 import threading
@@ -47,9 +49,9 @@ class HttpServer():
 
 
 def main():
-    gpd = GamepadServices().start()
     ws = WebsocketServices().start()
     web = HttpServer().start()
+    gpd = GamepadServices().start()
     # 主线程获取并处理输出结果
     while True:
         try:

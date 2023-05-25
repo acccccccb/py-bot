@@ -13,7 +13,18 @@
 <body>
     <div id="app">
         <pre>{{ gamepad }}</pre>
-
+        <pre>{{ dogTop }}</pre>
+        <pre>{{ dogLeft }}</pre>
+        <pre>{{ dogTop2 }}</pre>
+        <pre>{{ dogLeft2 }}</pre>
+        <div class="dog" :style="{
+            top: dogTop + 'px',
+            left: dogLeft + 'px'
+        }"></div>
+        <div class="dog" :style="{
+            top: dogTop2 + 'px',
+            left: dogLeft2 + 'px'
+        }"></div>
         <div class="gamepad-main"
             :class="gamepad.left_tigger_value !== -1 && gamepad.right_tigger_value !== -1 ? 'bamepad-main-active' : ''">
             <template v-if="btnVisible">
@@ -91,6 +102,7 @@
                     return {
                         btnVisible: false,
                         gamepad: {
+                            "power_level": -1,
                             "btn": -1,
                             "left_tigger_value": -1,
                             "right_tigger_value": -1,
@@ -98,7 +110,11 @@
                             "left_axis_y": 0,
                             "right_axis_x": 0,
                             "right_axis_y": 0
-                        }
+                        },
+                        dogTop: 0,
+                        dogLeft: 0,
+                        dogTop2: 0,
+                        dogLeft2: 0,
                     }
                 },
                 created() {
@@ -108,7 +124,7 @@
                     websocketInit() {
                         const _this = this;
                         // Create WebSocket connection.
-                        const socket = new WebSocket("ws://192.168.1.15:8765");
+                        const socket = new WebSocket(`ws://${window.location.hostname}:8765`);
 
                         // Connection opened
                         socket.addEventListener("open", (event) => {
@@ -127,6 +143,10 @@
                                 // 在控制台中打印解析后的 JSON 数据
                                 console.log(jsonData);
                                 _this.gamepad = jsonData;
+                                _this.dogLeft += jsonData.left_axis_x * 50;
+                                _this.dogTop += jsonData.left_axis_y * 50;
+                                _this.dogLeft2 += jsonData.right_axis_x * 50;
+                                _this.dogTop2 += jsonData.right_axis_y * 50;
                                 // 进行其他操作
                                 // ...
                             };

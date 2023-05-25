@@ -1,3 +1,4 @@
 .vscode
 .idea
+.cloudbase
 */**/__pycache__

@@ -158,6 +158,7 @@ def gamepad(queue):
                         right_tigger_id = event.axis
                         right_tigger_moving = True
                         right_tigger_value = event.value
+                        joystick.rumble(1,1,100)
                     elif event.value <= 0:
                         right_tigger_moving = False
                         right_tigger_value = -1
@@ -186,6 +187,7 @@ def gamepad(queue):
             
             json_data = {
                 # "fps": clock.get_fps(),
+                "power_level": joystick.get_power_level(),
                 "btn": btn,
                 "left_tigger_value": left_tigger_value,
                 "right_tigger_value": right_tigger_value,
