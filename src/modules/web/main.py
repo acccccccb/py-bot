@@ -1,30 +1,46 @@
 # -*- coding: utf-8 -*-
 import os
-import http.server
-import socketserver
+# import http.server
 import asyncio
+from flask import Flask, Response
+import cv2
 
 
-def http_server(queue):
+def video_server(queue):
     HTTP_HOST = os.getenv('HTTP_HOST')
-    # 指定服务器的端口号
     HTTP_PORT = os.getenv('HTTP_PORT')
-    # 指定工作目录路径
-    WWWROOT_DIR = os.path.join(os.getcwd(), 'src', 'wwwroot')
+    # 将队列对象传递给路由处理程序
+    app = Flask(__name__)
 
-    # 将工作目录更改为指定目录
-    os.chdir(WWWROOT_DIR)
+    def generate_video(queue):
+        video_writer = cv2.VideoWriter('output.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 25, (800, 600))
+        while True:
+            frame = queue.get()  # 从队列中获取视频帧
+            video_writer.write(frame)
+            yield (b'--frame\r\n' + b'Content-Type: video/mp4\r\n\r\n' + frame.tobytes() + b'\r\n\r\n')
 
-    # 创建一个静态文件处理器
-    handler = http.server.SimpleHTTPRequestHandler
 
-    # 使用指定的端口号启动服务器
+    def generate_image(queue):
+        while True:
+            frame = queue.get()  # 从队列中获取视频帧
+            _, jpeg = cv2.imencode('.jpg', frame)  # 将帧编码为 JPEG 格式
+            yield (b'--frame\r\n' + b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
 
-    def main():
-        with socketserver.TCPServer((HTTP_HOST, int(HTTP_PORT)),
-                                    handler) as httpd:
-            print(f"Server started on {HTTP_HOST}:{HTTP_PORT}")
-            httpd.serve_forever()
-            asyncio.Future()  # run forever
 
-    asyncio.run(main())
+    @app.route('/')
+    def index():
+        return "Video Streaming Server"
+
+    @app.route('/video_feed')
+    def video_feed():
+        return Response(generate_video(queue), mimetype='video/mp4')
+
+    @app.route('/image_feed')
+    def image_feed():
+        return Response(generate_image(queue), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+    app.run(HTTP_HOST, int(HTTP_PORT))
+
+if __name__ == '__main__':
+    video_server()

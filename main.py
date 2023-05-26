@@ -10,11 +10,12 @@ from typing import Any
 # from src.modules.speak.main import speak
 from src.modules.gamepad.main import gamepad
 from src.modules.socket.main import start_websocket
-from src.modules.web.main import http_server
+from src.modules.web.main import video_server
+from src.modules.camera.main import video_stream
 
 # 创建队列用于存储输出结果
-queue = Queue()
-
+queue = Queue() #手柄控制器
+camera_quee = Queue() # 视频流
 # 创建websocket服务
 class WebsocketServices():
     def __init__(self):
@@ -39,7 +40,17 @@ class GamepadServices():
 
 class HttpServer():
     def __init__(self):
-        self.sender_thread = threading.Thread(target=http_server,args=(queue,))
+        self.sender_thread = threading.Thread(target=video_server,args=(camera_quee,))
+    def start(self):
+        self.sender_thread.start()
+        return self
+    def end(self):
+        if self.server_thread is not None and self.server_thread.is_alive():
+            self.server_thread.join()
+
+class Camera():
+    def __init__(self):
+        self.sender_thread = threading.Thread(target=video_stream,args=(camera_quee,))
     def start(self):
         self.sender_thread.start()
         return self
@@ -52,6 +63,7 @@ def main():
     ws = WebsocketServices().start()
     web = HttpServer().start()
     gpd = GamepadServices().start()
+    vc = Camera().start()
     # 主线程获取并处理输出结果
     while True:
         try:
@@ -63,6 +75,7 @@ def main():
             web.end()
             ws.end()
             gpd.end()
+            vc.end()
             break
 
 if __name__ == '__main__':
