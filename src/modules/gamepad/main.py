@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+import os
 import json
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
 import time, sys
 
