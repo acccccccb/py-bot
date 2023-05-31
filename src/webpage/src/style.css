@@ -2,7 +2,7 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
-@media (prefers-color-scheme: light) {
+/* @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
         background-color: #556;
@@ -16,4 +16,4 @@
           background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
           color: #fff;
   }
-}
+} */
