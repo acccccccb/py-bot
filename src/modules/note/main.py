@@ -140,6 +140,7 @@ class Xfuedu:
         max_len = len(self.feeds)
         for index, feed in enumerate(self.feeds):
             content = await self.get_content(feed["url"])
+            content = feed["title"] + "\n" + content
             await self.save_book(book_name, content)
             print(f"[{index}/{max_len}] " + feed["url"])
             await asyncio.sleep(10)
@@ -148,7 +149,7 @@ class Xfuedu:
 async def main():
     br = Xfuedu()
     await br.get_list()
-    await br.save_all("大秦")
+    await br.save_all("大秦：开局自曝穿越者，嬴政麻了")
     await br.close()
 
 
